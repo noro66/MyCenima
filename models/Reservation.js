@@ -4,19 +4,19 @@ const reservationSchema = new mongoose.Schema({
     seance: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Seance',
-        required: [true, "Please add the seance for this reservation"]
+        required: true
     },
     reservedSeat: {
         seatId: {
-            type: mongoose.Schema.Types.ObjectId, // Reference to the seat _id from Seance
-            required: [true, "Please specify the seat being reserved"],
-            ref: 'Seance'
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'Seance.seats' // Reference to the seat in Seance's seats array
         }
     },
     reservedBy: {
-        type: mongoose.Schema.Types.ObjectId, // Reference to the User making the reservation
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, "Please specify the user making the reservation"]
+        required: true
     },
     status: {
         type: String,

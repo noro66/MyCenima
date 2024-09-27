@@ -1,6 +1,6 @@
-const {Reservation, validateCreatingReservation, validateUpdatingReservation} =  require('../models/Reservation')
 const asyncHandler = require('express-async-handler')
 const {Seance} = require("../models/Seance");
+const Reservation = require("../models/Reservation");
 
 /**
  * @desc Get all reservations
@@ -60,14 +60,13 @@ const createReservation = asyncHandler(async (req, res) => {
 
 // Save the seance with the updated seat status
     await seance.save();
-
-    const reservation = new Reservation({
+    console.log(req.body, req.user.id)
+    const reservation = new Reservation ({
         seance: req.body.seanceId,
         reservedSeat: { seatId: req.body.seatId },
         reservedBy: req.user.id,
         status: 'pending'
     });
-
     const result = await reservation.save();
     res.status(200).json({ message: 'Seat reserved successfully.', result });
 })
