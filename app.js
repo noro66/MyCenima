@@ -19,6 +19,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/admin', require('./routes/admin'))
 
 
+
 //Error Handling middleware
 app.use(notFound);
 app.use(errorHandler);

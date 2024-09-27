@@ -78,4 +78,15 @@ const login = asyncHandler(async (req, res) => {
     res.status(200).json({ ...other, token });
 })
 
-module.exports = {login, register}
+/**
+ * @desc show profile information
+ * @route /api/auth/me
+ * @method GET
+ * @access public
+ */
+const me  = asyncHandler (async  (req ,res) => {
+    let user = await User.findOne({ _id: req.user.id });
+        const { password, ...other } = user._doc;
+        res.status(200).json({other});
+})
+module.exports = {login, register, me}
