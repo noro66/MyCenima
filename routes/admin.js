@@ -1,9 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const {createAdmin} = require('../controllers/adminController')
+const {createAdmin, getAdminById, getAllAdmins, updateAdmin, deleteUser} = require('../controllers/adminController')
+const {verifyTokenAndAdmin} = require("../middlewares/verifyToken");
 
 
-router.post('/create', createAdmin)
+router.post('/create', )
 
+router.route('/')
+    .get(getAllAdmins)
+    .post( verifyTokenAndAdmin,  createAdmin)
+
+router.route('/:id')
+    .get(verifyTokenAndAdmin, getAdminById)
+    .put(verifyTokenAndAdmin, updateAdmin)
+    .delete( verifyTokenAndAdmin,  deleteUser)
 
 module.exports = router;

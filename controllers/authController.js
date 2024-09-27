@@ -88,5 +88,7 @@ const me  = asyncHandler (async  (req ,res) => {
     let user = await User.findOne({ _id: req.user.id });
         const { password, ...other } = user._doc;
         res.status(200).json({other});
-})
+});
+
+
 module.exports = {login, register, me}
