@@ -6,10 +6,10 @@ router.post('/register',register);
 
 router.post('/login', login);
 
-router.post('/logout', login);
-
-router.post('/logout', forget);
-
-router.post('/logout', reset);
+// router.post('/logout', logout);
+//
+// router.post('/forget', forget);
+//
+// router.post('/reset', reset);
 
 module.exports = router;

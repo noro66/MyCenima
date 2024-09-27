@@ -9,13 +9,13 @@ const connectToDb = require('./config/db')
 
 
 //connect to database
- await connectToDb();
+connectToDb();
 
 // costume middleware
 app.use(logger);
 
 // Routes
-app.use('/api/auth', )
+app.use('/api/auth', require('./routes/auth'))
 
 
 //Error Handling middleware
