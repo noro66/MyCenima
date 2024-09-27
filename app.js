@@ -16,6 +16,7 @@ app.use(logger);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'))
+app.use('/api/admin', require('./routes/admin'))
 
 
 //Error Handling middleware
@@ -24,5 +25,5 @@ app.use(errorHandler);
 
 
 //Running  the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=> console.log(`Service is running in ${process.env.NODE_ENV} port ${PORT}`));
