@@ -1,10 +1,15 @@
 const express = require("express");
-const {verifyToken} = require("../middlewares/verifyToken");
-const {createReservation} = require("../controllers/reservationController");
+const {getAllReservations, getReservationById, createReservation, updateReservation, deleteReservation} = require("../controllers/reservationController");
+const {verifyTokenAndAdmin, verifyToken} = require("../middlewares/verifyToken");
 const router = express.Router();
 
-router.post('/', verifyToken, createReservation);
+router.route('/')
+    .get(verifyTokenAndAdmin, getAllReservations)
+    .post( verifyToken,  createReservation)
 
-// createReservation
+router.route('/:id')
+    .get(verifyTokenAndAdmin, getReservationById)
+    .put(verifyToken, updateReservation)
+    .delete( verifyToken,  deleteReservation)
 
 module.exports = router;
