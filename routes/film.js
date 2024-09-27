@@ -8,7 +8,8 @@ router.route('/')
     .post( verifyTokenAndAdmin,  createFilm)
 
 router.route('/:id')
-    .get(getFilmById).put(verifyTokenAndAdmin, updateFilm)
+    .get(getFilmById)
+    .put(verifyTokenAndAdmin, updateFilm)
     .delete( verifyTokenAndAdmin,  deleteFilm)
 
 module.exports = router;
