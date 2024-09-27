@@ -1,4 +1,6 @@
 const  express = require('express');
+const app = express();
+app.use(express.json());
 
 require('dotenv').config(); //Access to the .env file
 const logger = require("./middlewares/logger");
@@ -7,9 +9,19 @@ const connectToDb = require('./config/db')
 
 
 //connect to database
-connectToDb();
-const app = express();
-app.use(express.json());
+ await connectToDb();
+
+// costume middleware
+app.use(logger);
+
+// Routes
+app.use('/api/auth', )
+
+
+//Error Handling middleware
+app.use(notFound);
+app.use(errorHandler);
+
 
 //Running  the server
 const PORT = process.env.PORT || 3000;
