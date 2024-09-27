@@ -17,6 +17,7 @@ app.use(logger);
 // Routes
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/admin', require('./routes/admin'))
+app.use('/api/film', require('./routes/fiml'))
 
 
 
