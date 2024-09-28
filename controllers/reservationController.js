@@ -37,7 +37,6 @@ const getReservationById = asyncHandler(async (req, res)=>{
 const createReservation = asyncHandler(async (req, res) => {
 
     const seance = await Seance.findById(req.body.seanceId);
-
     if (!seance) {
         return res.status(400).json({ message: 'The selected seance is not found.' });
     }
@@ -78,17 +77,33 @@ const createReservation = asyncHandler(async (req, res) => {
  * @access private
  */
 const updateReservation = asyncHandler( async (req, res)=>{
-    const {error} = validateUpdatingReservation(req.body);
-    if (error){
-        return res.status(400).json({message: error.details[0].message});
+    const reservation = await  Reservation.findById(req.params.id);
+    if (reservation && reservation.reservedBy.toString() !== req.user.id){
+        return res.status(401).json({message : "you cant update this reservation"})
     }
+
+    const seance = await Seance.findById(req.body.seanceId);
+
+    if (!seance) {
+        return res.status(400).json({ message: 'The selected seance is not found.' });
+    }
+
+    const {available} =  seance.seats.find(seat => seat._id.toString() === req.body.seatId);
+
+
+    if (!available){
+        return res.status(400).json({ message: 'The selected seat  is not available.' });
+    }
+    const oldSeance = await  Seance.findById(reservation.seance.id);
+
+   oldSeance.seats =  oldSeance.seats.map( seat => seat.id === reservation.reservedSeat.seatId ?  { ...seat, available: true } : seat);
+    // oldSeance.save();
     const updateReservation = await Reservation.findByIdAndUpdate( req.params.id, {
         $set : {
-            dateTime: req.body.dateTime,  // Date and time of the screening
-            price: req.body.price,        // Price for the screening
-            seats: req.body.seats,        // Seats array
-            film: req.body.film,          // Film ID (referenced from Film model)
-            Salle: req.body.Salle         // Salle ID (referenced from Salle model)
+            seance: req.body.seanceId,
+            reservedSeat: { seatId: req.body.seatId },
+            reservedBy: req.user.id,
+            status: 'pending'
         }
     }, {new : true});
     if (updateReservation){
@@ -107,6 +122,9 @@ const updateReservation = asyncHandler( async (req, res)=>{
  */
 const deleteReservation = asyncHandler( async (req, res)=>{
     const reservation = await  Reservation.findById(req.params.id);
+    if (reservation && reservation.reservedBy.toString() !== req.user.id){
+        return res.status(401).json({message : "you cant delete this reservation"})
+    }
     if (reservation){
         await  Reservation.findByIdAndDelete(req.params.id);
         res.status(200).json({message: "reservation has been deleted !"});
