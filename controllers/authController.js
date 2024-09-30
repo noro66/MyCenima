@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const {validateUserRegister, User, validateUserLogin} = require("../models/User");
-const bcrypt = require("bcryptjs");
+const Jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
 
 /**
  * @desc Register New User
@@ -89,6 +90,74 @@ const me  = asyncHandler (async  (req ,res) => {
         const { password, ...other } = user._doc;
         res.status(200).json({other});
 });
+/**
+ * @desc send forgot password link
+ * @route /api/auth/forget-password
+ * @method POST
+ * @access public
+ */
+const sendForgotPasswordLink = asyncHandler(async (req, res) => {
+    let user = await User.findOne({ email: req.body.email });
+    if (!user) {
+        return res.status(404).json({ message: "Email not found!" });
+    }
 
+    const secret = process.env.JWT_SECRET_KEY + user.password;
+    const token = Jwt.sign({ email: user.email, id: user.id }, secret, { expiresIn: '15m' });
+    const link = `http://localhost:3000/api/auth/reset-password/${user.id}/${token}`;
 
-module.exports = {login, register, me}
+    res.status(201).json({ message: "Password reset link sent!", link });
+});
+
+/**
+ * @desc Validate reset password token
+ * @route /api/auth/reset-password/:userId/:token
+ * @method GET
+ * @access public
+ */
+const getForgotPassword = asyncHandler(async (req, res) => {
+    const { userId, token } = req.params;
+
+    let user = await User.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found!" });
+    }
+
+    const secret = process.env.JWT_SECRET_KEY + user.password;
+    try {
+        Jwt.verify(token, secret);
+        res.status(200).json({ message: "Token is valid.", email: user.email });
+    } catch (error) {
+        res.status(400).json({ message: "Invalid or expired token." });
+    }
+});
+
+/**
+ * @desc Reset password
+ * @route /api/auth/reset-password/:userId/:token
+ * @method POST
+ * @access public
+ */
+const resetPassword =  asyncHandler(async (req, res) => {
+    const { userId, token } = req.params;
+    const newPassword = req.body.password;
+
+    let user = await User.findById(userId);
+    if (!user) {
+        return res.status(404).json({ message: "User not found!" });
+    }
+
+    const secret = process.env.JWT_SECRET_KEY + user.password;
+        Jwt.verify(token, secret);
+        // Generate salt and hash the new password
+        const salt = await bcrypt.genSalt(10);
+
+        // Update the user's password and save
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        // Return success message
+        res.status(200).json({ message: "Password changed successfully", password : req.body.newPassword} );
+});
+
+module.exports = {login, register, me, resetPassword, getForgotPassword, sendForgotPasswordLink}
