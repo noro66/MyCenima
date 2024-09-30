@@ -20,6 +20,7 @@ app.use('/api/admin', require('./routes/admin'))
 app.use('/api/film', require('./routes/film'))
 app.use('/api/salle', require('./routes/salle'))
 app.use('/api/seance', require('./routes/seance'))
+app.use('/api/upload', require('./routes/upload'))
 app.use('/api/reservation', require('./routes/reservation'))
 
 

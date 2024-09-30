@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 
 const FilmSchema = new mongoose.Schema({
+    image :{
+        type: String,
+        required : false,
+    },
     title: {
         type: String,
         required: [true, "Please add the title of the film"],

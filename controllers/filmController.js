@@ -40,8 +40,8 @@ const createFilm = asyncHandler(async (req, res) => {
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
-
     const film = new Film({
+        image: req.image.name,
         title: req.body.title,
         description: req.body.description,
         genre: req.body.genre,
