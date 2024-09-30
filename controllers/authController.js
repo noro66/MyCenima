@@ -2,7 +2,8 @@ const asyncHandler = require("express-async-handler");
 const {validateUserRegister, User, validateUserLogin} = require("../models/User");
 const Jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
-
+const nodemailer = require('nodemailer')
+const {response} = require("express");
 /**
  * @desc Register New User
  * @route /api/auth/register
@@ -102,11 +103,41 @@ const sendForgotPasswordLink = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: "Email not found!" });
     }
 
+    // Create token using JWT
     const secret = process.env.JWT_SECRET_KEY + user.password;
     const token = Jwt.sign({ email: user.email, id: user.id }, secret, { expiresIn: '15m' });
     const link = `http://localhost:3000/api/auth/reset-password/${user.id}/${token}`;
 
-    res.status(201).json({ message: "Password reset link sent!", link });
+    // Create a transporter for sending email
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: process.env.USERMAIL,
+            pass: process.env.USERPASS
+        }
+    });
+
+    // Define email options
+    const mailOptions = {
+        from: process.env.USERMAIL,
+        to: user.email,
+        subject: "Reset Password Mycinema", // Fixed typo
+        html: `<div>
+                    <h4>Click on the link below to reset your password</h4>
+                    <p>${link}</p>
+               </div>`
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+            return res.status(500).json({ message: "Failed to send email." });
+        } else {
+            console.log("Email sent: " + info.response);
+            return res.status(200).json({ message: "Message sent successfully to " + user.email });
+        }
+    });
 });
 
 /**
@@ -138,7 +169,7 @@ const getForgotPassword = asyncHandler(async (req, res) => {
  * @method POST
  * @access public
  */
-const resetPassword =  asyncHandler(async (req, res) => {
+const resetPassword =  asyncHandler(async (req, res) =>     {
     const { userId, token } = req.params;
     const newPassword = req.body.password;
 
