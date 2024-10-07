@@ -6,7 +6,10 @@ require('dotenv').config(); //Access to the .env file
 const logger = require("./middlewares/logger");
 const {notFound, errorHandler} = require("./middlewares/notFound");
 const connectToDb = require('./config/db')
-
+const cors = require('cors');
+app.use(cors({
+    origin : "http://localhost:5173"
+}));
 
 //connect to database
 connectToDb();
