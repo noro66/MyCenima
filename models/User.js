@@ -35,8 +35,9 @@ const UserSchema = mongoose.Schema({
 
 //Generate Token
 UserSchema.methods.generateToken  = function (){
+    const {password, ...user} = this._doc;
     return jwt.sign(
-        { id: this._id, isAdmin: this.isAdmin},
+        { id: this._id, isAdmin: this.isAdmin, user : user },
         process.env.JWT_SECRET_KEY
     )
 }

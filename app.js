@@ -1,6 +1,7 @@
 const  express = require('express');
 const app = express();
 app.use(express.json());
+const path = require('path');
 
 require('dotenv').config(); //Access to the .env file
 const logger = require("./middlewares/logger");
@@ -10,6 +11,10 @@ const cors = require('cors');
 app.use(cors({
     origin : "http://localhost:5173"
 }));
+
+// Serve static files (images) from the 'public' directory
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 //connect to database
 connectToDb();

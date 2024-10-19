@@ -3,6 +3,11 @@ const Joi = require("joi");  // Corrected the import of Joi
 
 // Reference to the Film and Salle models
 const SeanceSchema = new mongoose.Schema({
+    title : {
+        type : String,
+        required: true,
+        default : "A romancing adventure about a reclusive author"
+    },
     dateTime: {
         type: Date,  // Should be a Date instead of String
         required: [true, "Please add the date and time for the showing"],
@@ -30,6 +35,11 @@ const SeanceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,  // Reference to Salle model
         ref: "Salle",
         required: [true, "Please add the Salle ID"]
+    },
+    image: {
+        type: String,
+        required : false,
+        default : "images.jpeg"
     }
 }, { timestamps: true });
 

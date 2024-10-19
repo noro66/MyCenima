@@ -5,6 +5,7 @@ const FilmSchema = new mongoose.Schema({
     image :{
         type: String,
         required : false,
+        default: '2024-09-30T21:14:06.141Zphotodoeprodile.jpg'
     },
     title: {
         type: String,
